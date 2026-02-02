@@ -1,13 +1,1329 @@
 ---
 name: good-fullstack
-description: Create distinctive, production-grade fullstack applications with exceptional design and engineering quality. Enforces high-quality React frontend development, secure backend practices, database design, logging/observability, and clean code organization. Automatically generates FILETREE.md documentation with styled summaries of all files and pages. Use when building UI components, APIs, database schemas, or any fullstack development work. Generates creative, polished code that avoids generic AI patterns.
+description: Create distinctive, production-grade fullstack applications with exceptional design and engineering quality. Enforces high-quality React frontend development, secure backend practices, database design, logging/observability, and clean code organization. Uses Figma MCP for design-first workflows - creating visual mockups in Figma before code implementation, then using Figma Desktop MCP to convert screens to code. Automatically generates FILETREE.md documentation with styled summaries of all files and pages. Use when building UI components, APIs, database schemas, or any fullstack development work. Generates creative, polished code that avoids generic AI patterns.
 ---
+
+> **⚠️ LLM INSTRUCTION - READ THIS FIRST ⚠️**
+> 
+> This skill file is **very long (~4000 lines)**. You MUST read the ENTIRE file to follow it correctly.
+> 
+> **If the file is too large to read at once:**
+> - Read it in chunks (e.g., 500-1000 lines at a time)
+> - Use `offset` and `limit` parameters when reading
+> - Do NOT skip sections - every section contains critical rules
+> 
+> **Key sections you MUST read:**
+> 1. Design-First Workflow with Figma MCP (mandatory for UI work)
+> 2. Comprehensive Figma MCP Tools Reference (ALL 574 tools documented)
+> 3. File Tree Documentation (FILETREE.md generation)
+> 4. Image Analysis & Design Recreation
+> 5. Frontend Aesthetics Guidelines (avoid AI slop)
+> 6. Backend Security Best Practices
+> 7. Database Design Best Practices
+> 8. Review Checklist (at the end)
+> 
+> **DO NOT partially read this skill and assume you understand it.**
 
 # Good Fullstack Development (2025-2026 Edition)
 
 This skill ensures all fullstack code follows modern best practices for beautiful, accessible, performant, secure, and maintainable applications. Updated with React 19, Tailwind CSS v4, Server Components, Core Web Vitals 2025, Node.js/Python backend security, and database design principles.
 
 **CRITICAL**: This skill creates distinctive, production-grade applications that avoid generic "AI slop" patterns. Every interface should be MEMORABLE and every backend should be SECURE and OBSERVABLE.
+
+**DESIGN-FIRST MANDATE**: When building UI features, ALWAYS create a visual design in Figma using Figma Local MCP BEFORE writing code. When converting designs to code or working with existing screens, use Figma Desktop MCP to generate UI code. Keep Figma files and app code synchronized at all times.
+
+---
+
+## Design-First Workflow with Figma MCP
+
+**CRITICAL**: This section defines the mandatory design-first approach. When users request UI features, mockups, screens, or any visual work - you MUST use Figma Local MCP to create designs FIRST, then use Figma Desktop MCP to convert them to code.
+
+**📚 COMPREHENSIVE TOOLS REFERENCE**: This section provides workflow examples. For the complete reference of all 574 Figma MCP tools (568 Local + 6 Desktop), see the "Comprehensive Figma MCP Tools Reference" section below.
+
+### Two-Phase Figma MCP Workflow
+
+**Phase 1: Design Creation with Figma Local MCP (568 tools)**
+- Create designs from scratch in Figma programmatically
+- Build components, screens, and design systems with tools like `create-button`, `create-dashboard-widget`, `create-design-system`
+- Validate designs with analysis tools like `analyze-color-contrast`, `analyze-wcag-aa`
+- Use when user asks for mockups, wireframes, or new UI features
+
+**Phase 2: Code Generation with Figma Desktop MCP (6 tools)**
+- Convert Figma designs to production-ready React code using `get_design_context` (PRIMARY TOOL)
+- Extract design tokens with `get_variable_defs` for Tailwind config
+- Capture screenshots with `get_screenshot` for documentation
+- Use when needing to turn screens into code or work with existing Figma files
+
+### When to Use Figma Local MCP (MANDATORY)
+
+**ALWAYS use Figma Local MCP when:**
+- User asks for mockups, wireframes, or designs
+- User requests a new UI feature, screen, or component
+- User asks to "create", "build", or "design" any interface
+- User mentions wanting to see something visually first
+- User asks for a design system
+- Starting any new fullstack project with UI
+- User provides a reference image to recreate
+- ANY request that involves visual output (even if user doesn't explicitly say "design")
+
+**The Rule**: If it has a UI, design it first in Figma using Local MCP, then convert to code using Desktop MCP.
+
+### Project Figma File Structure
+
+Every project with UI MUST have a Figma file:
+
+```
+Figma File Structure:
+├── 🎨 Design System Page
+│   ├── Variables (colors, spacing, typography)
+│   ├── Component Library
+│   └── Style Guide
+├── 📱 Screens Page
+│   ├── Dashboard
+│   ├── Auth Flow
+│   ├── Settings
+│   └── Other screens
+└── 📦 Components Page (optional)
+    └── Reusable components
+
+Local Code Structure:
+project-root/
+├── figma-file-key.txt         # Store Figma file key for reference
+├── src/
+│   └── ...                    # Code implementation
+└── FILETREE.md
+```
+
+### Design-Code Synchronization Protocol
+
+**MANDATORY**: Keep Figma files and code implementation synchronized at ALL times.
+
+#### Sync Rules
+
+1. **Design Changes → Code Updates**
+   - When you modify a Figma file using Local MCP, use Desktop MCP to regenerate code
+   - Extract colors, spacing, fonts from Figma variables
+   - Match component structure from Figma to React components
+
+2. **Code Changes → Design Updates**
+   - When making significant code UI changes, update the Figma file using Local MCP
+   - Keep the Figma file as the visual source of truth
+
+3. **Figma File is the Master**
+   - The Figma file represents the current state of the app
+   - All screens in production should exist in Figma
+   - Use Figma to track design decisions and iterations
+
+### Phase 1: Figma Local MCP Workflow (Design Creation)
+
+#### Step 1: Get Figma File Key
+
+```typescript
+// ALWAYS start by getting the current Figma file key
+// Use Figma Local MCP
+CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "get-file-key",
+  arguments: {}
+})
+
+// Store the file key for later use with Desktop MCP
+```
+
+#### Step 2: Create Frames for Screens
+
+**CRITICAL**: When designing, think about REAL dimensions and proportions:
+
+```typescript
+// Standard device widths:
+// Desktop: 1440px, 1280px, 1920px
+// Tablet: 768px, 1024px
+// Mobile: 375px, 390px, 414px
+
+// Create desktop screen frame
+CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "create-frame",
+  arguments: {
+    x: 0,
+    y: 0,
+    width: 1440,
+    height: 900,
+    name: "Dashboard - Desktop"
+  }
+})
+
+// Create mobile screen frame
+CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "create-frame",
+  arguments: {
+    x: 1500,
+    y: 0,
+    width: 390,
+    height: 844,
+    name: "Dashboard - Mobile"
+  }
+})
+```
+
+#### Step 3: Build Components with Realistic Proportions
+
+**CRITICAL**: Components must have realistic proportions:
+
+| Component | Recommended Width | Height |
+|-----------|------------------|--------|
+| **Sidebar** | 240px - 280px | fixed height |
+| **Navbar** | full width | 64px - 80px |
+| **Card** | 280px - 400px or fill | auto |
+| **Button** | auto (min 120px) | 36px - 48px |
+| **Input** | full width | 40px - 48px |
+| **Modal** | 480px - 640px | auto |
+| **Avatar** | 32px - 48px | same as width |
+| **Icon** | 16px - 24px | same as width |
+
+```typescript
+// ✅ GOOD: Create properly sized components
+
+// Create sidebar frame (260px wide)
+CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "create-frame",
+  arguments: {
+    x: 0,
+    y: 0,
+    width: 260,
+    height: 900,
+    name: "Sidebar",
+    parentId: "0:1"  // Parent frame ID
+  }
+})
+
+// Create navbar frame (full width, 64px tall)
+CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "create-frame",
+  arguments: {
+    x: 260,
+    y: 0,
+    width: 1180,
+    height: 64,
+    name: "Navbar",
+    parentId: "0:1"  // Parent frame ID
+  }
+})
+```
+
+### Design System Creation with Figma Local MCP
+
+When user asks for a design system, create it in Figma using Local MCP:
+
+#### Step 1: Create Design System Page
+
+```typescript
+// Create a page for the design system
+// Note: Figma Local MCP has many tools for creating design systems
+// Explore available tools with:
+CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "export-design-system",
+  arguments: {}
+})
+```
+
+#### Step 2: Define Color Variables
+
+```typescript
+// Create color variables in Figma
+// Use Figma's native variables feature through Local MCP
+// Colors should follow a consistent palette:
+// - Primary: #6366f1
+// - Secondary: #f1f5f9
+// - Background: #ffffff
+// - Surface: #f8fafc
+// - Text: #0f172a
+// - Muted: #64748b
+// - Border: #e2e8f0
+// - Error: #ef4444
+// - Success: #22c55e
+// - Warning: #f59e0b
+```
+
+#### Step 3: Create Reusable Components
+
+```typescript
+// Create component library frame
+CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "create-frame",
+  arguments: {
+    x: 0,
+    y: 0,
+    width: 1200,
+    height: 800,
+    name: "Component Library"
+  }
+})
+
+// Create button component
+CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "create-component",
+  arguments: {
+    x: 50,
+    y: 50,
+    width: 120,
+    height: 44,
+    name: "Button/Primary"
+  }
+})
+
+// Use other Local MCP tools to add more components:
+// - create-text for text layers
+// - create-rectangle for shapes
+// - create-component-variants for different states
+```
+
+### Phase 2: Figma Desktop MCP Workflow (Design to Code)
+
+**CRITICAL**: After creating designs in Figma Local MCP, use Figma Desktop MCP to convert them to production-ready code.
+
+#### Step 1: Get Design Context from Figma
+
+```typescript
+// Use Figma Desktop MCP to get design context for a specific node
+// You can get the nodeId from the Figma URL or by selecting in Figma
+
+CallMcpTool({
+  server: "user-figma-desktop",
+  toolName: "get_design_context",
+  arguments: {
+    nodeId: "123:456",  // Node ID from Figma (e.g., "123:456")
+    clientLanguages: "typescript,html,css",
+    clientFrameworks: "react,nextjs,tailwindcss",
+    artifactType: "WEB_PAGE_OR_APP_SCREEN",
+    taskType: "CREATE_ARTIFACT"
+  }
+})
+
+// This returns:
+// - Component structure
+// - Styles and tokens
+// - Generated code
+// - Design metadata
+```
+
+#### Step 2: Extract Design Variables
+
+```typescript
+// Get all variables (colors, spacing, typography) from Figma file
+CallMcpTool({
+  server: "user-figma-desktop",
+  toolName: "get_variable_defs",
+  arguments: {}
+})
+
+// Use this to create your design tokens in code
+```
+
+#### Step 3: Get Screenshots for Documentation
+
+```typescript
+// Capture screenshots of your designs for documentation
+CallMcpTool({
+  server: "user-figma-desktop",
+  toolName: "get_screenshot",
+  arguments: {
+    nodeId: "123:456"
+  }
+})
+```
+
+### Implementation: Design to Code Translation
+
+After creating design in Figma and extracting context with Desktop MCP, translate to code with EXACT values:
+
+#### 1. Extract Design Tokens from Figma
+
+```typescript
+// From Figma variables (via get_variable_defs), create Tailwind config
+// tailwind.config.ts
+
+export default {
+  theme: {
+    extend: {
+      colors: {
+        // Match EXACTLY from Figma variables
+        primary: {
+          DEFAULT: "#6366f1",
+          hover: "#4f46e5",
+        },
+        background: "#ffffff",
+        surface: "#f8fafc",
+        foreground: "#0f172a",
+        muted: "#64748b",
+        border: "#e2e8f0",
+      },
+      fontSize: {
+        // Match EXACTLY from Figma text styles
+        display: ["48px", { lineHeight: "1.1" }],
+        h1: ["36px", { lineHeight: "1.2" }],
+        h2: ["28px", { lineHeight: "1.3" }],
+        h3: ["22px", { lineHeight: "1.4" }],
+        body: ["16px", { lineHeight: "1.5" }],
+        small: ["14px", { lineHeight: "1.5" }],
+      },
+      spacing: {
+        // Match EXACTLY from Figma spacing values
+        xs: "4px",
+        sm: "8px",
+        md: "16px",
+        lg: "24px",
+        xl: "32px",
+        xxl: "48px",
+      },
+      borderRadius: {
+        // Match EXACTLY from Figma corner radius
+        sm: "4px",
+        md: "8px",
+        lg: "12px",
+        xl: "16px",
+      },
+    },
+  },
+};
+```
+
+#### 2. Match Component Dimensions from Figma
+
+```tsx
+// ❌ BAD: Guessing dimensions
+function Sidebar() {
+  return <aside className="w-64">...</aside>;  // 256px - close but not exact
+}
+
+// ✅ GOOD: Exact match from Figma design (260px from get_design_context)
+function Sidebar() {
+  return (
+    <aside 
+      className="h-full p-4 flex flex-col gap-2"
+      style={{ width: 260 }}  // Exact value from Figma
+    >
+      ...
+    </aside>
+  );
+}
+
+// ✅ BETTER: Use CSS variable from Figma design tokens
+// globals.css
+:root {
+  --sidebar-width: 260px;  /* From Figma variables */
+}
+
+function Sidebar() {
+  return (
+    <aside className="h-full p-4 flex flex-col gap-2 w-[var(--sidebar-width)]">
+      ...
+    </aside>
+  );
+}
+
+// ✅ BEST: Use the code generated by Figma Desktop MCP
+// The get_design_context tool returns production-ready React code
+// with exact dimensions, styles, and structure from your Figma design
+```
+
+### Design Screenshot Validation
+
+After implementing code, validate against Figma design:
+
+```typescript
+// Take screenshot of Figma design using Desktop MCP
+CallMcpTool({
+  server: "user-figma-desktop",
+  toolName: "get_screenshot",
+  arguments: {
+    nodeId: "123:456"  // Your dashboard frame node ID
+  }
+})
+
+// Compare visually with your code output
+// Iterate until they match
+```
+
+### Complete Design-First Example with Figma MCP
+
+**User Request**: "Create a dashboard page"
+
+**Phase 1: Create Design in Figma Local MCP**
+
+```typescript
+// 1. Get current Figma file key
+const fileKey = await CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "get-file-key",
+  arguments: {}
+})
+
+// 2. Create dashboard frame (1440x900 desktop)
+await CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "create-frame",
+  arguments: {
+    x: 0,
+    y: 0,
+    width: 1440,
+    height: 900,
+    name: "Dashboard"
+  }
+})
+
+// 3. Create sidebar (260px wide)
+await CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "create-frame",
+  arguments: {
+    x: 0,
+    y: 0,
+    width: 260,
+    height: 900,
+    name: "Sidebar",
+    parentId: "0:1"  // Dashboard frame ID
+  }
+})
+
+// 4. Create main content area
+await CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "create-frame",
+  arguments: {
+    x: 260,
+    y: 0,
+    width: 1180,
+    height: 900,
+    name: "Main Content",
+    parentId: "0:1"
+  }
+})
+
+// 5. Add text layers, buttons, cards using create-text, create-rectangle, etc.
+// ... (continue building the design in Figma)
+```
+
+**Phase 2: Convert Design to Code with Figma Desktop MCP**
+
+```typescript
+// 1. Get design context for the dashboard frame
+const designContext = await CallMcpTool({
+  server: "user-figma-desktop",
+  toolName: "get_design_context",
+  arguments: {
+    nodeId: "0:1",  // Dashboard frame node ID
+    clientLanguages: "typescript",
+    clientFrameworks: "react,nextjs,tailwindcss",
+    artifactType: "WEB_PAGE_OR_APP_SCREEN",
+    taskType: "CREATE_ARTIFACT",
+    forceCode: true
+  }
+})
+
+// designContext returns production-ready React code!
+
+// 2. Get design variables for styling
+const variables = await CallMcpTool({
+  server: "user-figma-desktop",
+  toolName: "get_variable_defs",
+  arguments: {}
+})
+
+// 3. Get screenshot for documentation
+const screenshot = await CallMcpTool({
+  server: "user-figma-desktop",
+  toolName: "get_screenshot",
+  arguments: {
+    nodeId: "0:1"
+  }
+})
+```
+
+**Phase 3: Implement Generated Code**
+
+```tsx
+// app/dashboard/page.tsx
+// Use the code generated by Figma Desktop MCP's get_design_context
+// It will look similar to this, but with exact values from your Figma design:
+
+export default function DashboardPage() {
+  return (
+    <div 
+      className="flex h-screen"
+      style={{ backgroundColor: "#0f0f0f" }}  // From Figma
+    >
+      {/* Sidebar - 260px from Figma design */}
+      <aside 
+        className="flex flex-col gap-2 p-4"
+        style={{ width: 260, backgroundColor: "#1a1a1a" }}  // Exact from Figma
+      >
+        <h1 className="text-xl font-bold text-white">AppName</h1>
+        <nav className="flex flex-col gap-1">
+          <a className="text-sm text-white">Dashboard</a>
+          <a className="text-sm text-muted">Analytics</a>
+          <a className="text-sm text-muted">Settings</a>
+        </nav>
+      </aside>
+      
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col gap-6 p-8">
+        <header className="flex justify-between items-center">
+          <h2 className="text-[28px] font-bold text-white">Dashboard</h2>
+        </header>
+        
+        {/* Cards - gap-6 = 24px from Figma */}
+        <div className="grid grid-cols-3 gap-6">
+          <Card />
+          <Card />
+          <Card />
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function Card() {
+  return (
+    <div 
+      className="p-5 rounded-xl"
+      style={{ 
+        height: 120,
+        backgroundColor: "#1a1a1a",
+        borderRadius: 12  // Exact from Figma
+      }}
+    >
+      {/* Card content */}
+    </div>
+  );
+}
+
+// IMPORTANT: The actual code from get_design_context will be more complete
+// with proper TypeScript types, accessibility attributes, and responsive design
+```
+
+### Design-First Checklist
+
+Before implementing ANY UI code:
+
+**Phase 1: Design Creation (Figma Local MCP) - 568 tools available**
+- [ ] Got Figma file key with `get-file-key`
+- [ ] Created frames with realistic dimensions using `create-frame` (1440px desktop, 390px mobile, etc.)
+- [ ] Built UI with pre-made components: `create-button`, `create-card`, `create-navigation`, etc.
+- [ ] Used `create-design-system` or `create-color-tokens` for design system
+- [ ] Applied consistent colors, typography, and spacing with `set-fill`, `set-font-size`, etc.
+- [ ] Validated accessibility with `analyze-color-contrast` and `analyze-wcag-aa`
+- [ ] Checked visual hierarchy with `analyze-visual-hierarchy`
+- [ ] Created reusable components with `create-component` and `create-component-set`
+- [ ] Optimized design with `optimize-images` and `reduce-file-size`
+
+**Phase 2: Code Generation (Figma Desktop MCP) - 6 tools available**
+- [ ] Used `get_design_context` to generate React code from Figma node (PRIMARY TOOL)
+- [ ] Used `get_variable_defs` to extract design tokens for Tailwind config
+- [ ] Used `get_screenshot` to document the design
+- [ ] Used `get_metadata` to understand node structure if needed
+- [ ] Validated generated code matches Figma design visually
+- [ ] Extracted exact design tokens (colors, spacing, fonts, radii) to Tailwind config
+- [ ] Implemented/refined code with EXACT values from Figma
+- [ ] Kept Figma file as source of truth for all design decisions
+
+**Tool Reference:**
+- See "Comprehensive Figma MCP Tools Reference" section for complete 574-tool documentation
+- Desktop MCP: 6 tools for code generation and extraction
+- Local MCP: 568 tools for design creation and manipulation
+
+### Dimension Quick Reference
+
+**Screen Widths:**
+- Mobile: 375px, 390px, 414px
+- Tablet: 768px, 1024px
+- Desktop: 1280px, 1440px, 1920px
+
+**Common Component Sizes:**
+- Sidebar: 240-280px wide
+- Navbar: 56-80px tall
+- Button: 36-48px tall, min 100px wide
+- Input: 40-48px tall
+- Card: 280-400px wide (or fluid)
+- Modal: 480-640px wide
+- Avatar: 32-48px (square)
+
+**Spacing Scale (4px base):**
+- xs: 4px
+- sm: 8px
+- md: 16px
+- lg: 24px
+- xl: 32px
+- xxl: 48px
+
+---
+
+## Comprehensive Figma MCP Tools Reference
+
+This section documents ALL available tools in both Figma Desktop MCP and Figma Local MCP servers. Use this as a complete reference guide.
+
+### Figma Desktop MCP Tools (6 Tools)
+
+Figma Desktop MCP connects to your open Figma desktop app and provides tools for **extracting design information and generating code**.
+
+| Tool | When to Use | Returns | Example |
+|------|-------------|---------|---------|
+| **`get_design_context`** | 🎯 **PRIMARY TOOL** - Convert any Figma design to production code | React/HTML/CSS code + design metadata | See Phase 2 examples above |
+| **`get_variable_defs`** | Extract all design tokens (colors, typography, spacing) from Figma variables | JSON of all variables and their values | Create Tailwind config from Figma |
+| **`get_screenshot`** | Capture high-quality screenshots of designs for documentation | Base64 encoded image | Document design decisions |
+| **`get_metadata`** | Get structural overview of nodes (IDs, types, positions) in XML | XML structure without full details | Navigate large files, find node IDs |
+| **`get_figjam`** | Convert FigJam boards to code (wireframes, diagrams) | Code representation of FigJam | Turn FigJam prototypes into code |
+| **`create_design_system_rules`** | Generate design system documentation for codebase | Design system rules prompt | Document design patterns |
+
+#### Figma Desktop MCP - Detailed Usage
+
+**`get_design_context` - THE CORE CODE GENERATION TOOL**
+
+```typescript
+// This is your PRIMARY tool for converting Figma designs to code
+CallMcpTool({
+  server: "user-figma-desktop",
+  toolName: "get_design_context",
+  arguments: {
+    nodeId: "123:456",  // Get from Figma URL or file
+    clientLanguages: "typescript,html,css",
+    clientFrameworks: "react,nextjs,tailwindcss",
+    artifactType: "WEB_PAGE_OR_APP_SCREEN",  // or COMPONENT_WITHIN_A_WEB_PAGE_OR_APP_SCREEN, REUSABLE_COMPONENT, DESIGN_SYSTEM
+    taskType: "CREATE_ARTIFACT",  // or CHANGE_ARTIFACT, DELETE_ARTIFACT
+    forceCode: true  // Force code generation even for large files
+  }
+})
+
+// Returns:
+// - Complete React/HTML code
+// - CSS styles
+// - Component structure
+// - Design tokens used
+// - Accessibility attributes
+```
+
+**`get_variable_defs` - EXTRACT DESIGN TOKENS**
+
+```typescript
+// Get ALL design tokens from Figma file
+CallMcpTool({
+  server: "user-figma-desktop",
+  toolName: "get_variable_defs",
+  arguments: {}  // No arguments needed
+})
+
+// Returns JSON like:
+// {
+//   "colors": { "primary": "#6366f1", "surface": "#ffffff" },
+//   "spacing": { "xs": "4px", "sm": "8px", ... },
+//   "typography": { "h1": { "fontSize": 48, "lineHeight": 1.2 } }
+// }
+
+// Use this to generate tailwind.config.ts
+```
+
+**`get_screenshot` - CAPTURE DESIGN**
+
+```typescript
+// Capture screenshot for documentation or comparison
+CallMcpTool({
+  server: "user-figma-desktop",
+  toolName: "get_screenshot",
+  arguments: {
+    nodeId: "123:456"  // Node to capture
+  }
+})
+
+// Returns: Base64 encoded PNG image
+```
+
+---
+
+### Figma Local MCP Tools (568 Tools)
+
+Figma Local MCP connects to Figma's API and provides tools for **creating and manipulating designs programmatically**. These tools are organized into categories:
+
+#### Tool Categories Overview
+
+| Category | Count | Purpose | Example Tools |
+|----------|-------|---------|---------------|
+| **Create** | 160 | Build UI components, patterns, layouts | `create-frame`, `create-text`, `create-button` |
+| **Set** | 80 | Modify properties of nodes | `set-fill`, `set-stroke`, `set-name` |
+| **Analyze** | 52 | Design analysis and validation | `analyze-color-contrast`, `analyze-accessibility` |
+| **Get** | 52 | Retrieve information from Figma | `get-file-key`, `get-node`, `get-styles` |
+| **Generate** | 19 | Auto-generate components and documentation | `generate-style-guide`, `generate-tokens` |
+| **Check** | 16 | Accessibility and quality checks | `check-color-contrast`, `check-keyboard-access` |
+| **Add** | 11 | Add effects, properties to nodes | `add-fill`, `add-stroke`, `add-shadow` |
+| **Suggest** | 11 | AI-powered design suggestions | `suggest-color-palette`, `suggest-layout` |
+| **Extract** | 9 | Extract design information | `extract-colors`, `extract-typography` |
+
+---
+
+### Core Figma Local MCP Tools by Category
+
+#### 1. CREATE TOOLS (160 tools) - Build Designs
+
+**Basic Shapes & Elements**
+```typescript
+// Create basic geometric shapes
+create-frame        // Create container frames (most common)
+create-rectangle    // Create rectangles
+create-ellipse      // Create circles/ellipses
+create-text         // Create text layers
+create-line         // Create lines
+create-arc          // Create arcs
+create-polygon      // Create polygons
+create-star         // Create stars
+```
+
+**UI Components**
+```typescript
+// Pre-built UI components - USE THESE FOR RAPID PROTOTYPING
+create-button              // Button with variants
+create-input               // Text input field
+create-checkbox            // Checkbox component
+create-radio               // Radio button
+create-switch              // Toggle switch
+create-select              // Dropdown select
+create-slider              // Range slider
+create-progress-bar        // Progress indicator
+create-avatar              // User avatar
+create-badge               // Status badge
+create-chip                // Chip/tag component
+create-card                // Card container
+create-modal               // Modal dialog
+create-drawer              // Side drawer
+create-tooltip             // Tooltip component
+create-dropdown            // Dropdown menu
+create-tabs                // Tab navigation
+create-accordion           // Collapsible accordion
+create-breadcrumbs         // Breadcrumb navigation
+create-pagination          // Pagination controls
+create-alert-banner        // Alert message
+create-notification        // Toast notification
+create-skeleton            // Loading skeleton
+create-loading-spinner     // Loading spinner
+```
+
+**Complex Patterns**
+```typescript
+// Full UI patterns and layouts
+create-navigation          // Navigation bar
+create-sidebar             // Sidebar layout
+create-footer              // Page footer
+create-header              // Page header
+create-hero-section        // Hero section
+create-feature-grid        // Feature showcase grid
+create-testimonial         // Testimonial card
+create-pricing-table       // Pricing comparison
+create-dashboard-widget    // Dashboard widget
+create-data-table          // Data table
+create-calendar-view       // Calendar
+create-kanban-board        // Kanban board
+create-timeline            // Timeline view
+create-chat-interface      // Chat UI
+create-profile-page        // User profile
+create-login-form          // Login form
+create-signup-form         // Registration form
+create-search-bar          // Search interface
+create-filter-panel        // Filter controls
+create-settings-panel      // Settings UI
+```
+
+**Design System Tools**
+```typescript
+// Design system creation
+create-design-system       // Full design system
+create-component-library   // Component library
+create-style-guide         // Style guide
+create-color-tokens        // Color system
+create-typography-scale    // Type scale
+create-spacing-scale       // Spacing system
+create-icon-grid           // Icon library
+create-illustration-style  // Illustration system
+```
+
+**Examples:**
+
+```typescript
+// Example 1: Create a button component
+CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "create-button",
+  arguments: {
+    x: 100,
+    y: 100,
+    width: 120,
+    height: 44,
+    text: "Click Me",
+    variant: "primary",  // primary, secondary, ghost, etc.
+    state: "default"     // default, hover, active, disabled
+  }
+})
+
+// Example 2: Create a full card component
+CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "create-card",
+  arguments: {
+    x: 0,
+    y: 0,
+    width: 320,
+    height: 400,
+    title: "Product Card",
+    description: "Product description here",
+    imageUrl: "https://...",
+    showButton: true,
+    buttonText: "Add to Cart"
+  }
+})
+
+// Example 3: Create a complete dashboard widget
+CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "create-dashboard-widget",
+  arguments: {
+    x: 0,
+    y: 0,
+    width: 400,
+    height: 300,
+    type: "stats",  // stats, chart, list, etc.
+    title: "Monthly Revenue",
+    value: "$24,500",
+    change: "+12.5%",
+    trend: "up"
+  }
+})
+```
+
+---
+
+#### 2. SET TOOLS (80 tools) - Modify Properties
+
+```typescript
+// Modify any property of existing nodes
+set-name               // Rename node
+set-fill               // Change fill color
+set-stroke             // Change border
+set-opacity            // Change transparency
+set-visible            // Show/hide
+set-locked             // Lock/unlock
+set-width              // Change width
+set-height             // Change height
+set-x                  // Change X position
+set-y                  // Change Y position
+set-rotation           // Rotate
+set-corner-radius      // Round corners
+set-padding            // Set padding
+set-gap                // Set gap between items
+set-layout-mode        // Set auto-layout (horizontal/vertical)
+set-text-content       // Change text
+set-font-size          // Change font size
+set-font-family        // Change font
+set-font-weight        // Change weight
+set-line-height        // Change line height
+set-letter-spacing     // Change letter spacing
+set-text-align         // Change alignment
+```
+
+**Examples:**
+
+```typescript
+// Modify an existing button's appearance
+CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "set-fill",
+  arguments: {
+    nodeId: "123:456",
+    color: "#6366f1",  // Primary color
+    opacity: 1.0
+  }
+})
+
+// Change text content
+CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "set-text-content",
+  arguments: {
+    nodeId: "123:457",
+    text: "Updated Button Text"
+  }
+})
+
+// Apply auto-layout
+CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "set-layout-mode",
+  arguments: {
+    nodeId: "123:458",
+    layoutMode: "horizontal",  // or "vertical"
+    padding: 16,
+    gap: 8,
+    primaryAxisAlign: "center",
+    counterAxisAlign: "center"
+  }
+})
+```
+
+---
+
+#### 3. ANALYZE TOOLS (52 tools) - Design Validation
+
+```typescript
+// Accessibility Analysis
+analyze-color-contrast     // Check WCAG contrast ratios
+analyze-wcag-aa           // WCAG 2.1 AA compliance
+analyze-wcag-aaa          // WCAG 2.1 AAA compliance
+analyze-keyboard-nav      // Keyboard accessibility
+analyze-screen-reader     // Screen reader compatibility
+analyze-alt-text          // Image alt text
+analyze-aria-labels       // ARIA labels
+analyze-focus-order       // Tab order
+
+// Visual Design Analysis
+analyze-color-harmony     // Color palette analysis
+analyze-typography-scale  // Type scale consistency
+analyze-spacing-scale     // Spacing consistency
+analyze-visual-hierarchy  // Visual hierarchy
+analyze-alignment         // Alignment issues
+analyze-balance           // Visual balance
+analyze-contrast-ratio    // Contrast issues
+analyze-whitespace        // Whitespace usage
+
+// UX Analysis
+analyze-cognitive-load    // Cognitive complexity
+analyze-fitts-law        // Touch target sizing
+analyze-hicks-law        // Decision complexity
+analyze-millers-law      // Information chunking
+analyze-gestalt-principles // Gestalt principles
+analyze-affordances      // UI affordances
+
+// Performance Analysis
+analyze-file-size        // File size optimization
+analyze-layer-depth      // Layer complexity
+analyze-component-count  // Component usage
+analyze-render-performance // Render performance
+```
+
+**Examples:**
+
+```typescript
+// Check color contrast for accessibility
+const contrastReport = await CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "analyze-color-contrast",
+  arguments: {
+    nodeId: "0:1",  // Analyze entire page
+    includeChildren: true,
+    level: "AA",  // WCAG AA standard
+    checkText: true,
+    checkGraphics: true,
+    checkUIComponents: true
+  }
+})
+
+// Analyze visual hierarchy
+const hierarchyReport = await CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "analyze-visual-hierarchy",
+  arguments: {
+    nodeId: "123:456",
+    checkSize: true,
+    checkColor: true,
+    checkPosition: true,
+    checkSpacing: true
+  }
+})
+
+// Check accessibility compliance
+const a11yReport = await CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "analyze-wcag-aa",
+  arguments: {
+    nodeId: "0:1",
+    generateReport: true,
+    includeRemediation: true
+  }
+})
+```
+
+---
+
+#### 4. GET TOOLS (52 tools) - Retrieve Information
+
+```typescript
+// File Information
+get-file-key           // Get current Figma file key
+get-file-name          // Get file name
+get-pages              // Get all pages
+get-current-page       // Get active page
+
+// Node Information
+get-node               // Get node by ID
+get-selection          // Get selected nodes
+get-children           // Get child nodes
+get-parent             // Get parent node
+get-siblings           // Get sibling nodes
+
+// Style Information
+get-styles             // Get all styles
+get-color-styles       // Get color styles
+get-text-styles        // Get text styles
+get-effect-styles      // Get effect styles
+get-variables          // Get design variables
+
+// Component Information
+get-components         // Get all components
+get-component-sets     // Get component variants
+get-instances          // Get component instances
+
+// Properties
+get-bounds             // Get node dimensions
+get-absolute-position  // Get absolute position
+get-fills              // Get fill properties
+get-strokes            // Get stroke properties
+get-effects            // Get effects
+```
+
+**Examples:**
+
+```typescript
+// Get the file key (needed for URLs and references)
+const fileKey = await CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "get-file-key",
+  arguments: {}
+})
+
+// Get all color styles in the file
+const colorStyles = await CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "get-color-styles",
+  arguments: {
+    includeDescription: true
+  }
+})
+
+// Get node information
+const nodeInfo = await CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "get-node",
+  arguments: {
+    nodeId: "123:456"
+  }
+})
+```
+
+---
+
+#### 5. COMPONENT OPERATIONS
+
+```typescript
+// Component Creation
+create-component           // Create component
+create-component-set       // Create component with variants
+create-component-variant   // Add variant to component
+create-instance            // Create component instance
+
+// Component Management
+detach-instance           // Detach from master
+swap-instance             // Swap to different component
+update-component          // Update master component
+publish-component         // Publish to library
+
+// Component Documentation
+create-component-doc      // Generate documentation
+create-component-specs    // Create specifications
+create-component-usage    // Usage examples
+create-component-anatomy  // Anatomy diagram
+```
+
+---
+
+#### 6. BOOLEAN OPERATIONS
+
+```typescript
+// Combine shapes
+create-boolean-union       // Union (add)
+create-boolean-subtract    // Subtract
+create-boolean-intersect   // Intersect
+create-boolean-exclude     // Exclude overlap
+```
+
+---
+
+#### 7. EFFECTS & STYLING
+
+```typescript
+// Visual Effects
+add-drop-shadow          // Add drop shadow
+add-inner-shadow         // Add inner shadow
+add-layer-blur           // Add layer blur
+add-background-blur      // Add background blur
+
+// Fills & Strokes
+add-fill                 // Add fill
+add-stroke               // Add stroke
+remove-fill              // Remove fill
+remove-stroke            // Remove stroke
+
+// Styles
+apply-color-style        // Apply color style
+apply-text-style         // Apply text style
+apply-effect-style       // Apply effect style
+create-color-style       // Create new color style
+create-text-style        // Create new text style
+```
+
+---
+
+#### 8. LAYOUT & ALIGNMENT
+
+```typescript
+// Alignment
+align-left               // Align to left
+align-center-h           // Center horizontally
+align-right              // Align to right
+align-top                // Align to top
+align-center-v           // Center vertically
+align-bottom             // Align to bottom
+
+// Distribution
+distribute-horizontal    // Distribute horizontally
+distribute-vertical      // Distribute vertically
+
+// Positioning
+bring-to-front          // Move to front
+bring-forward           // Move forward one layer
+send-backward           // Move backward one layer
+send-to-back            // Move to back
+```
+
+---
+
+#### 9. OPTIMIZATION TOOLS
+
+```typescript
+// Performance
+optimize-images         // Compress images
+optimize-vectors        // Simplify vectors
+flatten-layers          // Flatten unnecessary groups
+reduce-file-size        // Overall file optimization
+
+// Cleanup
+deduplicate-components  // Remove duplicate components
+merge-similar-styles    // Consolidate styles
+remove-unused-styles    // Clean unused styles
+simplify-structure      // Simplify layer structure
+```
+
+---
+
+### Usage Workflow Guide
+
+#### For New Projects (Creating from Scratch)
+
+```typescript
+// 1. Start with file key
+const fileKey = await CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "get-file-key",
+  arguments: {}
+})
+
+// 2. Create design system
+await CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "create-design-system",
+  arguments: {
+    name: "App Design System",
+    includeColors: true,
+    includeTypography: true,
+    includeComponents: true
+  }
+})
+
+// 3. Build screens using pre-built components
+await CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "create-dashboard-widget",
+  arguments: { /* ... */ }
+})
+
+// 4. Analyze accessibility
+await CallMcpTool({
+  server: "user-figma-mcp-local",
+  toolName: "analyze-wcag-aa",
+  arguments: { nodeId: "0:1" }
+})
+
+// 5. Convert to code
+await CallMcpTool({
+  server: "user-figma-desktop",
+  toolName: "get_design_context",
+  arguments: { /* ... */ }
+})
+```
+
+#### For Existing Designs (Converting to Code)
+
+```typescript
+// 1. Get design metadata
+await CallMcpTool({
+  server: "user-figma-desktop",
+  toolName: "get_metadata",
+  arguments: { nodeId: "0:1" }
+})
+
+// 2. Extract design tokens
+await CallMcpTool({
+  server: "user-figma-desktop",
+  toolName: "get_variable_defs",
+  arguments: {}
+})
+
+// 3. Generate code
+await CallMcpTool({
+  server: "user-figma-desktop",
+  toolName: "get_design_context",
+  arguments: {
+    nodeId: "123:456",
+    clientFrameworks: "react,nextjs,tailwindcss"
+  }
+})
+```
+
+---
+
+### Quick Reference: Most Used Tools
+
+**For Code Generation (Desktop MCP):**
+- `get_design_context` - Convert design to code (PRIMARY)
+- `get_variable_defs` - Extract design tokens
+- `get_screenshot` - Capture designs
+
+**For Design Creation (Local MCP):**
+- `get-file-key` - Get file reference
+- `create-frame` - Create containers
+- `create-text` - Add text
+- `create-button`, `create-card`, etc. - UI components
+- `set-fill`, `set-stroke` - Modify appearance
+
+**For Design Validation (Local MCP):**
+- `analyze-color-contrast` - Check accessibility
+- `analyze-wcag-aa` - WCAG compliance
+- `analyze-visual-hierarchy` - Check hierarchy
+
+**For Design System (Local MCP):**
+- `create-design-system` - Generate full system
+- `create-color-tokens` - Create color palette
+- `create-component-library` - Build components
 
 ---
 
